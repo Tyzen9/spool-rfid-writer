@@ -241,7 +241,23 @@ def main():
             print(f"\nWriting {len(tlv_data)} bytes starting at page 4...")
             write_pages(handle, tlv_data, start_page=4)
             print("\n✅ Done. Tag written successfully.")
-            print("Tip: verify with the printtag-web.pages.dev Read Tag function on your phone,")
+
+            hex_str = parsed.get("color_hex", "")
+            try:
+                r, g, b = int(hex_str[0:2], 16), int(hex_str[2:4], 16), int(hex_str[4:6], 16)
+                swatch = f"\033[48;2;{r};{g};{b}m   \033[0m"
+            except (ValueError, IndexError):
+                swatch = "   "
+
+            subtype = parsed.get("subtype", "") or "(none)"
+            print()
+            print("  Brand   :", parsed.get("brand", "N/A"))
+            print("  Type    :", parsed.get("type", "N/A"))
+            print("  Subtype :", subtype)
+            print(f"  Color   : {swatch}  #{hex_str}")
+            print("  ID      :", parsed.get("spool_id", "N/A"))
+
+            print("\nTip: verify with the printtag-web.pages.dev Read Tag function on your phone,")
             print("or the NFC Tools app.")
         finally:
             disconnect(handle)
